@@ -1,0 +1,11 @@
+{
+  "name": "@vue3-realize1/reactivity",
+  "version": "1.0.0",
+  "description": "@vue3-realize/reactivity",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
