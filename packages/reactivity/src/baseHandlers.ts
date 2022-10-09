@@ -5,6 +5,7 @@ import { reactive, ReactiveFlags, reactiveMap, readonly, readonlyMap, shallowRea
 const get = createGetter()
 const set = createSetter()
 const readonlyGet=createGetter(true)
+const shallowReadOnlyGet=createGetter(true,true)
 
 function createGetter(isReadonly = false, shallow = false) {
   return function get(target, key, receiver) {
@@ -29,6 +30,10 @@ function createGetter(isReadonly = false, shallow = false) {
     if (!isReadonly) {
        // 在触发 get 的时候进行依赖收集
        track(target,'get',key)
+    }
+
+    if(shallow){
+      return res
     }
 
     if (isObject(res)) {
@@ -63,4 +68,16 @@ export const readonlyHandlers={
 export const mutableHandlers = {
   get,
   set,
+}
+
+export const shallowReadonlyHandlers={
+  get:shallowReadOnlyGet,
+  set(target,key){
+     // readonly 的响应式对象不可以修改值
+     console.warn(
+      `Set operation on key "${String(key)}" failed: target is readonly.`,
+      target
+    );
+    return true;
+  }
 }
