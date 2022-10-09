@@ -1,4 +1,5 @@
 import { isObject } from './../../shared/src/index'
+import { track, trigger } from './effect'
 import { reactive, ReactiveFlags, reactiveMap, readonly, readonlyMap, shallowReadonlyMap } from './reactive'
 
 const get = createGetter()
@@ -26,6 +27,8 @@ function createGetter(isReadonly = false, shallow = false) {
 
     const res = Reflect.get(target, key, receiver)
     if (!isReadonly) {
+       // 在触发 get 的时候进行依赖收集
+       track(target,'get',key)
     }
 
     if (isObject(res)) {
@@ -39,6 +42,8 @@ function createGetter(isReadonly = false, shallow = false) {
 function createSetter() {
   return function set(target, key, value, receiver) {
     const result = Reflect.set(target, key, value, receiver)
+     // 在触发 set 的时候进行触发依赖
+    trigger(target, "set", key);
     return result
   }
 }
